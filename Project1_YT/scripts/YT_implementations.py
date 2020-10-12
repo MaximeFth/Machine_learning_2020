@@ -182,7 +182,9 @@ def build_poly(x, degree):
     return poly
 
 
-def cross_validation(y, x, k_indices, k, degree, logistic, regression_method, **kwargs):
+def cross_validation(y, x, k_indices, k, degree, regression_method, **kwargs):
+    method = str(regression_method).split()[1]
+    
     test_indice = k_indices[k]
     train_indice = k_indices[~(np.arange(k_indices.shape[0]) == k)]
     train_indice = train_indice.reshape(-1)
@@ -196,7 +198,7 @@ def cross_validation(y, x, k_indices, k, degree, logistic, regression_method, **
         x_train = build_poly(x_train, degree)
         x_test = build_poly(x_test, degree)
 
-    if logistic == True:
+    if method == "logistic_regression" or method == "reg_logistic_regression":
         w_initial = np.zeros(x_train.shape[1])
         kwargs = kwargs
         kwargs['initial_w'] = w_initial
@@ -204,9 +206,15 @@ def cross_validation(y, x, k_indices, k, degree, logistic, regression_method, **
     w, loss_train = regression_method(y = y_train, tx = x_train, **kwargs)
 
     loss_test = compute_loss(y_test, x_test, w)
-    
+
     y_train_pred = predict_labels(w, x_train)
     y_test_pred = predict_labels(w, x_test)
+
+    if method == "logistic_regression" or method == "reg_logistic_regression":
+        y_test = y_test.copy()
+        y_train = y_train.copy()
+        y_test[y_test == 0] = -1
+        y_train[y_train == 0] = -1
     
     accuracy_train = compute_accuracy(y_train_pred, y_train)
     accuracy_test = compute_accuracy(y_test_pred, y_test)
