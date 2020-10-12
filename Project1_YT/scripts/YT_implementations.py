@@ -211,6 +211,9 @@ def cross_validation(y, x, k_indices, k, degree, regression_method, **kwargs):
     y_test_pred = predict_labels(w, x_test)
 
     if method == "logistic_regression" or method == "reg_logistic_regression":
+        y_train_pred = predict_labels(w, x_train, True)
+        y_test_pred = predict_labels(w, x_test, True)
+        
         y_test = y_test.copy()
         y_train = y_train.copy()
         y_test[y_test == 0] = -1
