@@ -105,7 +105,8 @@ def least_squares(y, tx):
     """Least squares regression using normal equations"""
     a = tx.T.dot(tx)
     b = tx.T.dot(y)
-    w = np.linalg.solve(a, b)
+    #w = np.linalg.solve(a, b)
+    w = np.linalg.lstsq(a, b)[0]
     # calculate loss
     loss = compute_loss(y, tx, w)
     
@@ -118,7 +119,8 @@ def ridge_regression(y, tx, lambda_):
     lambda_I = lambda_prime * np.identity(tx.shape[1])
     a = tx.T.dot(tx) + lambda_I
     b = tx.T.dot(y)
-    w = np.linalg.solve(a, b)
+    #w = np.linalg.solve(a, b)
+    w = np.linalg.lstsq(a, b)[0]
     # calculate loss
     loss = compute_loss(y, tx, w)
     
@@ -225,3 +227,140 @@ def cross_validation(y, x, k_indices, k, degree, regression_method, **kwargs):
     return w, loss_train, loss_test, accuracy_train, accuracy_test
 
 
+def hyperparameter_tuning(y, tX, regression_method, max_iters, k_fold, k_indices, params1, params2):
+    
+    method = str(regression_method).split()[1]
+    
+    losses_tr = []
+    losses_te = []
+    accuracies_tr = []
+    accuracies_te = []
+    
+    # 1-param tuning
+    if params2 is None:
+        for param in params1:
+            losses_tr_tmp = []
+            losses_te_tmp = []
+            accuracies_tr_tmp = []
+            accuracies_te_tmp = []
+            
+            for k in range(k_fold):
+                initial_w = np.zeros(tX.shape[1])
+                
+                # least_squares
+                if method == "least_squares":
+                    w, loss_tr, loss_te, acc_tr, acc_te = cross_validation(y, tX, k_indices, k, param, regression_method)
+                # logistic_regression
+                elif method == "logistic_regression":
+                    w, loss_tr, loss_te, acc_tr, acc_te = cross_validation(y, tX, k_indices, k, None, regression_method, initial_w=None, max_iters=max_iters, gamma=param)
+                # least_squares_GD / least_squares_SGD
+                else:
+                    w, loss_tr, loss_te, acc_tr, acc_te = cross_validation(y, tX, k_indices, k, None, regression_method, initial_w=initial_w, max_iters=max_iters, gamma=param)
+                
+                losses_tr_tmp.append(loss_tr)
+                losses_te_tmp.append(loss_te)
+                accuracies_tr_tmp.append(acc_tr)
+                accuracies_te_tmp.append(acc_te)
+            
+            losses_tr.append(np.mean(losses_tr_tmp))
+            losses_te.append(np.mean(losses_te_tmp))
+            accuracies_tr.append(np.mean(accuracies_tr_tmp))
+            accuracies_te.append(np.mean(accuracies_te_tmp))
+    
+        idx_opt = np.argmax(accuracies_te)
+        param_opt = params1[idx_opt]
+        accuracy_opt = accuracies_te[idx_opt]
+        
+        return param_opt, accuracy_opt, losses_tr, losses_te, accuracies_tr, accuracies_te
+
+    # 2-params tuning
+    else:
+        opt_params1 = []
+        for param2 in params2:
+            losses_tr_tmp2 = []
+            losses_te_tmp2 = []
+            accuracies_tr_tmp2 = []
+            accuracies_te_tmp2 = []
+            
+            for param1 in params1:
+                losses_tr_tmp = []
+                losses_te_tmp = []
+                accuracies_tr_tmp = []
+                accuracies_te_tmp = []
+                
+                for k in range(k_fold):
+                    initial_w = np.zeros(tX.shape[1])
+                    
+                    # ridge_regression
+                    if method == "ridge_regression":
+                        w, loss_tr, loss_te, acc_tr, acc_te = cross_validation(y, tX, k_indices, k, param2, regression_method, lambda_=param1)
+                    # reg_logistic_regression
+                    elif method == "reg_logistic_regression":
+                        w, loss_tr, loss_te, acc_tr, acc_te = cross_validation(y, tX, k_indices, k, None, regression_method, initial_w=None, max_iters=max_iters, gamma=param2, lambda_=param1)
+                    else:
+                        break
+                    
+                    losses_tr_tmp.append(loss_tr)
+                    losses_te_tmp.append(loss_te)
+                    accuracies_tr_tmp.append(acc_tr)
+                    accuracies_te_tmp.append(acc_te)
+                
+                losses_tr_tmp2.append(np.mean(losses_tr_tmp))
+                losses_te_tmp2.append(np.mean(losses_te_tmp))
+                accuracies_tr_tmp2.append(np.mean(accuracies_tr_tmp))
+                accuracies_te_tmp2.append(np.mean(accuracies_te_tmp))
+            
+            idx_opt_param1 = np.argmax(accuracies_te_tmp)
+            opt_params1.append(params1[idx_opt_param1])
+            losses_tr.append(losses_tr_tmp2[idx_opt_param1])
+            losses_te.append(losses_te_tmp2[idx_opt_param1])
+            accuracies_tr.append(accuracies_tr_tmp2[idx_opt_param1])
+            accuracies_te.append(accuracies_te_tmp2[idx_opt_param1])
+    
+        idx_opt = np.argmax(accuracies_te)
+        param1_opt = opt_params1[idx_opt]
+        param2_opt = params2[idx_opt]
+        accuracy_opt = accuracies_te[idx_opt]
+        
+        return param1_opt, param2_opt, accuracy_opt, losses_tr, losses_te, accuracies_tr, accuracies_te
+
+
+def test(y, tX, regression_method, max_iters, k_fold, k_indices, param1, param2):
+    method = str(regression_method).split()[1]
+    
+    losses_tr = []
+    losses_te = []
+    accuracies_tr = []
+    accuracies_te = []
+    
+    for k in range(k_fold):
+        initial_w = np.zeros(tX.shape[1])
+        
+        if method == "least_squares_GD":
+            w, loss_tr, loss_te, acc_tr, acc_te = cross_validation(y, tX, k_indices, k, None, regression_method, initial_w=initial_w, max_iters=max_iters, gamma=param1)
+        elif method == "least_sqaures_SGD":
+            w, loss_tr, loss_te, acc_tr, acc_te = cross_validation(y, tX, k_indices, k, None, least_squares_SGD, initial_w=initial_w, max_iters=max_iters, gamma=param1)
+        elif method == "least_squares":
+            w, loss_tr, loss_te, acc_tr, acc_te = cross_validation(y, tX, k_indices, k, param1, regression_method)
+        elif method == "ridge_regression":
+            w, loss_tr, loss_te, acc_tr, acc_te = cross_validation(y, tX, k_indices, k, param1, regression_method, lambda_=param2)
+        elif method == "logistic_regression":
+            w, loss_tr, loss_te, acc_tr, acc_te = cross_validation(y, tX, k_indices, k, None, regression_method, max_iters=max_iters, gamma=param1)
+        elif method == "reg_logistic_regression":
+            w, loss_tr, loss_te, acc_tr, acc_te = cross_validation(y, tX, k_indices, k, None, regression_method, max_iters=max_iters, gamma=param1, lambda_=param2)
+        
+        losses_tr.append(loss_tr)
+        losses_te.append(loss_te)
+        accuracies_tr.append(acc_te)
+        accuracies_te.append(acc_te)
+    
+    l_tr = np.mean(losses_tr)
+    l_te = np.mean(losses_te)
+    acc_tr = np.mean(accuracies_tr)
+    acc_te = np.mean(accuracies_te)
+
+    print("Train Loss     : {:f} / Test Loss     : {:f}".format(l_tr, l_te))
+    print("Train Accuracy : {:f} / Test Accuracy : {:f}".format(acc_tr, acc_te))
+    
+    
+    return
