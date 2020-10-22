@@ -47,10 +47,23 @@ def create_csv_submission(ids, y_pred, name):
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({'Id':int(r1),'Prediction':int(r2)})
             
-def standardize(x):
-    centered_data = x - np.mean(x, axis=0)
-    std_data = centered_data / np.std(centered_data, axis=0)
-    return std_data
+def standardize(x, mean=None, std= None):
+    """
+    standardization function
+    
+    :param x: features
+    :param mean: mean to standardize with
+    :param std: standard deviation to standardize with
+    :return x,mean,std: standardized features, and the mean and std they have been standardized with
+    """
+    
+    if mean is None:
+        mean = np.mean(x, axis=0)
+    x = x - mean
+    if std is None:
+        std = np.std(x, axis=0)
+    x = x / std
+    return x, mean, std
 
 
 def build_model_data(height, weight):
@@ -68,9 +81,7 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
     Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
     Outputs an iterator which gives mini-batches of `batch_size` matching elements from `y` and `tx`.
     Data can be randomly shuffled to avoid ordering in the original data messing with the randomness of the minibatches.
-    Example of use :
-    for minibatch_y, minibatch_tx in batch_iter(y, tx, 32):
-        <DO-SOMETHING>
+
     """
     data_size = len(y)
 
