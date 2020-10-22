@@ -1,8 +1,20 @@
 """some helper functions for project 1."""
 import csv
+from tqdm import tqdm
 import numpy as np
-
+import matplotlib.pyplot as plt
+import implementations as imp
 # least square gradient helpers functions
+
+# -*- coding: utf-8 -*-
+"""Function used to compute the loss."""
+import numpy as np
+def compute_loss(y, tx, w):
+
+    return np.square(np.subtract(y,tx@w)).mean()
+
+
+
 def compute_gradient(y, tx, w):
     """
     Compute the gradient.
@@ -310,7 +322,6 @@ def cross_validation(y, x, k_indices,k, regression_method, **kwargs):
     test_indice = k_indices[k]
     train_indice = k_indices[~(np.arange(k_indices.shape[0]) == k)]
     train_indice = train_indice.reshape(-1)
-    
     y_test = y[test_indice]
     y_train = y[train_indice]
     x_test = x[test_indice]
@@ -325,22 +336,22 @@ def cross_validation(y, x, k_indices,k, regression_method, **kwargs):
     kwargs['initial_w'] = w_initial
 
     aug = False
-    if regression_method is reg_logistic_regression:
+    if regression_method is imp.reg_logistic_regression:
         w, loss_train = regression_method(y_train, x_train, kwargs['initial_w'],  kwargs['max_iter'], kwargs['gamma'], kwargs['lambda_'])
         loss_test = reg_LR_loss_function(y_test, x_test, w ,kwargs['lambda_'])
         
-    elif regression_method is logistic_regression:
+    elif regression_method is imp.logistic_regression:
         w, loss_train = regression_method(y_train, x_train, kwargs['initial_w'],  kwargs['max_iter'], kwargs['gamma'])
         loss_test = LR_loss_function(y_test, x_test, w)
         
-    elif regression_method is least_square:
+    elif regression_method is imp.least_square:
         w, loss_train = regression_method(y = y_train, tx = x_train)
         loss_test = compute_loss(y_test, x_test, w)
         
-    elif regression_method is ridge_regression:
+    elif regression_method is imp.ridge_regression:
         w, loss_train = regression_method(y_train,x_train, kwargs['lambda_'])
         loss_test = compute_loss(y_test, x_test, w)
-    elif regression_method is least_squares_SGD: 
+    elif regression_method is imp.least_squares_SGD: 
         aug = True
         y_test = (y_test*2)-1
         y_train = (y_train*2)-1
@@ -390,7 +401,7 @@ def train(model,y,tx,seed=0, **kwargs):
     
 
     logistic = False
-    if model is logistic_regression or model is reg_logistic_regression:
+    if model is imp.logistic_regression or model is imp.reg_logistic_regression:
         logistic = True
     
     k_indices = build_k_indices(y, k_fold, seed)
@@ -409,7 +420,7 @@ def train(model,y,tx,seed=0, **kwargs):
         degree = int(degree)
     print("{:15.14}|{:15.14}|{:15.14}|{:15.14}|{:15.14}".format("Train losses","Test losses","Train accuracy","Test Accuracy", "Evaluation"))
     for i in range(k_fold):
-        if model is least_square or model is ridge_regression:
+        if model is imp.least_square or model is imp.ridge_regression:
             print("{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}".format(losses_train[i], losses_test[i] ,accuracies_train[i], accuracies_test[i], evaluate(tX_std, np.array(weights[i]), degree)))
         else:
             print("{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}".format(losses_train[i][-1], losses_test[i] ,accuracies_train[i], accuracies_test[i], evaluate(tX_std, np.array(weights[i]), degree)))

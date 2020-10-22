@@ -1,5 +1,6 @@
-from proj1_helpers import *
-
+import proj1_helpers as ph
+import numpy as np
+import matplotlib.pyplot as plt
 
 def least_squares_GD(y, tx, initial_w, max_iter, gamma):
     """
@@ -17,8 +18,8 @@ def least_squares_GD(y, tx, initial_w, max_iter, gamma):
     losses = []
     w = initial_w
     for n_iter in range(max_iter):
-        gradient = compute_gradient(y,tx,w)
-        loss = compute_loss(y,tx,w)
+        gradient = ph.compute_gradient(y,tx,w)
+        loss = ph.compute_loss(y,tx,w)
         w = w-gamma*gradient
         ws.append(w)
         losses.append(loss)
@@ -42,12 +43,12 @@ def least_squares_SGD(y, tx, initial_w, batch_size, max_iter, gamma):
     w = initial_w
     for n_iter in range(max_iter):
         # compute random batch
-        a = batch_iter(y, tx, batch_size, num_batches=1, shuffle=True)
+        a = ph.batch_iter(y, tx, batch_size, num_batches=1, shuffle=True)
         a = list(a)
         tx2, y2 = a[0][1], a[0][0]
         # compute gradient & loss
-        grad = compute_stoch_gradient(y2,tx2,w)
-        loss= compute_loss(y2, tx2, w)
+        grad = ph.compute_stoch_gradient(y2,tx2,w)
+        loss= ph.compute_loss(y2, tx2, w)
         # update gradient
         w = w-gamma*grad
         # store w and loss
@@ -68,7 +69,7 @@ def least_square(y, tx):
     :returns w,l: weights and loss of the model
     """
     w = np.linalg.solve(tx.T@tx,tx.T@y)
-    l = compute_loss(y, tx, w)
+    l = ph.compute_loss(y, tx, w)
     return w, l
 
 def ridge_regression(y, tx, lambda_):
@@ -81,7 +82,7 @@ def ridge_regression(y, tx, lambda_):
     :returns w,l: weights and loss of the model
     """
     w = np.linalg.solve(tx.T@tx+lambda_*np.eye(tx.shape[1]),tx.T@y)
-    l = compute_loss(y, tx, w)
+    l = ph.compute_loss(y, tx, w)
     return w, l
 
 
@@ -101,8 +102,8 @@ def logistic_regression(y,tx, initial_w,  max_iter, gamma):
     losses = []
     ws = []
     for iter_n in range(max_iter):
-        w = update_weights(y, tx, initial_w, gamma)
-        loss = LR_loss_function(y, tx, w)
+        w = ph.update_weights(y, tx, initial_w, gamma)
+        loss = ph.LR_loss_function(y, tx, w)
         losses.append(loss)
         ws.append(w)
     ls, wes  = np.array(losses), np.array(ws)
@@ -128,8 +129,8 @@ def reg_logistic_regression(y,tx, initial_w,max_iter, gamma,lambda_):
     for iter_n in range(max_iter):
         if(iter_n > 800):
             gamma = gamma-gamma/30
-        w = reg_LR_update_weights(y, tx, initial_w, gamma,lambda_)
-        loss = reg_LR_loss_function(y, tx, w, lambda_)
+        w = ph.reg_LR_update_weights(y, tx, initial_w, gamma,lambda_)
+        loss = ph.reg_LR_loss_function(y, tx, w, lambda_)
         losses.append(loss)
         ws.append(w)
     ls, wes  = np.array(losses), np.array(ws)
