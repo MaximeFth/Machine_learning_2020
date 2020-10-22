@@ -37,7 +37,7 @@ tX_no_outliers_std = standardize(tX_no_outliers)
 def run():
     with open('parameters.json') as param:
         parameters = json.load(param)
-    train("LR",y_no_outliers,tX_no_outliers_std,seed=0,**parameters[Method])
+    train(locals()[parameters[Method]["f_name"]],y_no_outliers,tX_no_outliers_std,seed=0,**parameters[Method])
 
           
 if __name__ == '__main':
