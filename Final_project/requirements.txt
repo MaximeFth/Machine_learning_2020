@@ -1,0 +1,4 @@
+animation
+numpy
+matplotlib
+jupyter

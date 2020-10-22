@@ -20,10 +20,14 @@ with open('parameters.json') as param:
 
 ####################################DATA PRE PROCESSING ############################################
 
-print("loading data...")
+print("loading data...", end = " ")
 "load the data"
 DATA_TRAIN_PATH = '../project1/data/train.csv' 
+
+idx = 0
+
 y, tX, ids = load_csv_data(DATA_TRAIN_PATH)
+
 
 "put the labels between 0 and 1"
 y_std = (y+1)/2
@@ -44,7 +48,7 @@ tX_no_outliers_std, _, _ = standardize(tX_no_outliers,tX_mean,tX_stdev)
 
 def run():
 	print("training using: ",parameters[Method]["f_name"])
-	train(globals()[parameters[Method]["f_name"]],y_no_outliers,tX_no_outliers_std,seed=0,**parameters[Method])
+	train(globals()[parameters[Method]["f_name"]],y_no_outliers,tX_no_outliers_std,tX_std,y_std,seed=0,**parameters[Method])
 
           
 if __name__ == '__main__':

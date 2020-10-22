@@ -4,6 +4,8 @@ from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
 import implementations as imp
+import animation
+import time
 # least square gradient helpers functions
 
 # -*- coding: utf-8 -*-
@@ -12,7 +14,6 @@ import numpy as np
 def compute_loss(y, tx, w):
 
     return np.square(np.subtract(y,tx@w)).mean()
-
 
 
 def compute_gradient(y, tx, w):
@@ -194,7 +195,7 @@ def build_poly(x, degree):
 
 
     
-def evaluate(tx, wf, degree):
+def evaluate(tx,y_std, wf, degree):
     
     """
     function to evaluate weights over all the train model
@@ -234,6 +235,8 @@ def remove_outliers_IQR(tx, y_, high,low):
 
 
 
+wheel = ('-', '/', '|', '\\')
+@animation.wait(wheel)
 def load_csv_data(data_path, sub_sample=False):
     """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
     y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)
@@ -374,7 +377,7 @@ def cross_validation(y, x, k_indices,k, regression_method, **kwargs):
     accuracy_test = compute_accuracy(y_test_pred, y_test)
     return w, loss_train, loss_test, accuracy_train, accuracy_test
 
-def train(model,y,tx,seed=0, **kwargs):
+def train(model,y,tx,tX_std,y_std,seed=0, **kwargs):
     """
     regularized logistic regression function 
     
@@ -421,12 +424,12 @@ def train(model,y,tx,seed=0, **kwargs):
     print("{:15.14}|{:15.14}|{:15.14}|{:15.14}|{:15.14}".format("Train losses","Test losses","Train accuracy","Test Accuracy", "Evaluation"))
     for i in range(k_fold):
         if model is imp.least_square or model is imp.ridge_regression:
-            print("{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}".format(losses_train[i], losses_test[i] ,accuracies_train[i], accuracies_test[i], evaluate(tX_std, np.array(weights[i]), degree)))
+            print("{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}".format(losses_train[i], losses_test[i] ,accuracies_train[i], accuracies_test[i], evaluate(tX_std,y_std, np.array(weights[i]), degree)))
         else:
-            print("{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}".format(losses_train[i][-1], losses_test[i] ,accuracies_train[i], accuracies_test[i], evaluate(tX_std, np.array(weights[i]), degree)))
+            print("{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}".format(losses_train[i][-1], losses_test[i] ,accuracies_train[i], accuracies_test[i], evaluate(tX_std,y_std, np.array(weights[i]), degree)))
         print("{:15.1}|{:15.14}|{:15.14}|{:15.14}|{:15.14}".format("","","","",""))
     print("<-"+"-"*75+"->")
-    print(f"evaluation mean w: {evaluate(tX_std, weights, degree)}")
+    print(f"evaluation mean w: {evaluate(tX_std,y_std, weights, degree)}")
 
     return weights, sum(accuracies_train)/len(accuracies_train),sum(accuracies_test)/len(accuracies_test)
     
