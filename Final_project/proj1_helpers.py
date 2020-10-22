@@ -180,6 +180,8 @@ def build_poly(x, degree):
 
 
 
+
+    
 def evaluate(tx, wf, degree):
     
     """
@@ -201,8 +203,7 @@ def evaluate(tx, wf, degree):
     y_pred = predict_labels(wk, tx)
     acc = compute_accuracy(y_std*2-1, y_pred)
     return acc
-
-def remove_outliers_IQR(tx, y, high,low):
+def remove_outliers_IQR(tx, y_, high,low):
     """
     removes outliers using IQR
     
@@ -212,13 +213,12 @@ def remove_outliers_IQR(tx, y, high,low):
     :param low: low IQR
     :returns tX, Y: features and labels without outliers
     """
-    Q1 = np.quantile(tX,low,axis = 0)
-    Q3 = np.quantile(tX,high, axis = 0)
+    Q1 = np.quantile(tx,low,axis = 0)
+    Q3 = np.quantile(tx,high, axis = 0)
     IQR = Q3 - Q1
-    tX_no_outliers = tX[~((tX < (Q1 - 1.5 * IQR)) |(tX > (Q3 + 1.5 * IQR))).any(axis=1)]
-    y_no_outliers = y_std[~((tX < (Q1 - 1.5 * IQR)) |(tX > (Q3 + 1.5 * IQR))).any(axis=1)]
+    tX_no_outliers = tx[~((tx < (Q1 - 1.5 * IQR)) |(tx > (Q3 + 1.5 * IQR))).any(axis=1)]
+    y_no_outliers = y_[~((tx < (Q1 - 1.5 * IQR)) |(tx > (Q3 + 1.5 * IQR))).any(axis=1)]
     return tX_no_outliers, y_no_outliers
-
 
 
 
@@ -324,7 +324,7 @@ def cross_validation(y, x, k_indices,k, regression_method, **kwargs):
     kwargs = kwargs
     kwargs['initial_w'] = w_initial
 
-    
+    aug = False
     if regression_method is reg_logistic_regression:
         w, loss_train = regression_method(y_train, x_train, kwargs['initial_w'],  kwargs['max_iter'], kwargs['gamma'], kwargs['lambda_'])
         loss_test = reg_LR_loss_function(y_test, x_test, w ,kwargs['lambda_'])
@@ -341,21 +341,27 @@ def cross_validation(y, x, k_indices,k, regression_method, **kwargs):
         w, loss_train = regression_method(y_train,x_train, kwargs['lambda_'])
         loss_test = compute_loss(y_test, x_test, w)
     elif regression_method is least_squares_SGD: 
+        aug = True
+        y_test = (y_test*2)-1
+        y_train = (y_train*2)-1
         w, loss_train = regression_method(y_train, x_train, kwargs['initial_w'],kwargs['batch_size'],  kwargs['max_iter'], kwargs['gamma'])
         loss_test = compute_loss(y_test, x_test, w)
     else:
+        aug = True
+        y_test = (y_test*2)-1
+        y_train = (y_train*2)-1
         w, loss_train = regression_method(y_train, x_train, kwargs['initial_w'],  kwargs['max_iter'], kwargs['gamma'])
         loss_test = compute_loss(y_test, x_test, w)
 
-        
+    if not aug:
+        y_test = (y_test*2)-1
+        y_train = (y_train*2)-1
     y_train_pred = predict_labels(w, x_train)
     y_test_pred = predict_labels(w, x_test)
-    y_test = (y_test*2)-1
-    y_train = (y_train*2)-1
+
     accuracy_train = compute_accuracy(y_train_pred, y_train)
     accuracy_test = compute_accuracy(y_test_pred, y_test)
     return w, loss_train, loss_test, accuracy_train, accuracy_test
-
 
 def train(model,y,tx,seed=0, **kwargs):
     """
