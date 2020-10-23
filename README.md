@@ -2,12 +2,14 @@
 
 ### Prerequisites
 
-This project runs on python3 and requires as external library: numpy, matplotlib, animation (for loading animations)
+This project runs on python3 and requires as external library: numpy, matplotlib, animation (for loading animations), argparse
 
 ```
-pip3 install numpy 
-pip3 install animation 
-pip3 install matplotlib
+pip install numpy 
+pip install animation 
+pip install matplotlib
+pip install argparse 
+
 ```
 
 ### Installing prerequisites
