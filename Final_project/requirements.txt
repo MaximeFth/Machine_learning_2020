@@ -1,5 +1,4 @@
-animation
 numpy
 matplotlib
 jupyter
-argparse
+

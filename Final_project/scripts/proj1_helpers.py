@@ -1,11 +1,11 @@
 """some helper functions for project 1."""
 import csv
-from tqdm import tqdm
+#from tqdm import tqdm banned :/
 import numpy as np
 import matplotlib.pyplot as plt
 import implementations as imp
-import animation
-import time
+#import animation banned :/ 
+#import time banned :/
 ####################################LS GD functions ###########################################
 
 # -*- coding: utf-8 -*-
@@ -254,8 +254,8 @@ def remove_outliers_IQR(tx, y_, high,low):
     return tX_no_outliers, y_no_outliers
 
 
-wheel = ('-', '/', '|', '\\')
-@animation.wait(wheel)
+#wheel = ('-', '/', '|', '\\')
+#@animation.wait(wheel)
 def load_csv_data(data_path, sub_sample=False):
     """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
     y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)
@@ -449,7 +449,7 @@ def train(model,y,tx,tX_std,y_std,seed=0, **kwargs):
         logistic = True
     
     k_indices = build_k_indices(y, k_fold, seed)
-    for k in tqdm(range(k_fold)):
+    for k in range(k_fold):
         w, loss_train, loss_test, accuracy_train, accuracy_test = cross_validation(y, tx, k_indices,k, model, **kwargs)
         weights.append(w)
         losses_train.append(loss_train)

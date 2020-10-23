@@ -2,16 +2,20 @@ from proj1_helpers import *
 from implementations import *
 import matplotlib.pyplot as plt
 import json
-import argparse
+import sys
 ####################################ARGS PROCESSING ###############################################
+# Argparse banned :(  used sys instead.
+#import argparse
+#parser = argparse.ArgumentParser(description='Process arguments')
+#parser.add_argument('Method', action="store", type=str, nargs = '?',default="LR", const = "LR")
+#args = parser.parse_args()
+#Method = args.Method
 
-
-parser = argparse.ArgumentParser(description='Process arguments')
-parser.add_argument('Method', action="store", type=str, nargs = '?',default="LR", const = "LR")
-
-args = parser.parse_args()
-Method = args.Method
-
+if len(sys.argv) > 1:
+	Method = str(sys.argv[1])
+	print(Method)
+else:
+	Method = "LR"
 assert Method in ['LR', 'R_LR', 'LS_SGD', 'LS_GD', 'RR', 'LS'], "method name not correct, please choose one of the following: LR, R_LR, LS_SGD, LS_GD, RR, LS"
 
 # loading parameters
