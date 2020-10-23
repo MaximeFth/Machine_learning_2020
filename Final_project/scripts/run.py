@@ -32,10 +32,13 @@ y, tX, ids = load_csv_data(DATA_TRAIN_PATH)
 
 "put the labels between 0 and 1"
 y_std = (y+1)/2
-tX_std, tX_mean, tX_stdev  = standardize(tX)
 
 "replace invalid value"
-#tX = replace(tX, -999)
+tX = replace(tX, -999)
+
+tX_std, tX_mean, tX_stdev  = standardize(tX)
+
+
 
 "remove outiers"
 tX_no_outliers, y_no_outliers = remove_outliers_IQR(tX,y_std, 0.85, 0)
@@ -63,6 +66,9 @@ def test_w(final_weights):
 	DATA_TEST_PATH = '../data/test.csv' 
 	_, tX_test, ids_test = load_csv_data(DATA_TEST_PATH)
 
+	#replacing the -999 values with the median
+	tX_test = replace(tX_test, -999)
+	
 	#standardize the testing data wrt to the train mean and standard deviation
 	tX_test_std,_,_ = standardize(tX_test, tX_mean, tX_stdev)
 
