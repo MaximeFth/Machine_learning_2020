@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import implementations as imp
 import animation
 import time
-# least square gradient helpers functions
+####################################LS GD functions ###########################################
 
 # -*- coding: utf-8 -*-
 """Function used to compute the loss."""
@@ -28,7 +28,7 @@ def compute_gradient(y, tx, w):
     grad = (-1/len(y))*tx.T@(y-tx@w)
     return grad
 
-# least square stochastic gradient helpers functions
+####################################LS SGD functions ##########################################
 def compute_stoch_gradient(y, tx, w):
     """
     Compute the gradient.
@@ -41,7 +41,32 @@ def compute_stoch_gradient(y, tx, w):
     e = y-tx@w
     grad = -1/len(y)*tx.T@e
     return grad
-# logistic regression and regularized helpers functions
+
+def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
+    """
+    Generate a minibatch iterator for a dataset.
+    Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
+    Outputs an iterator which gives mini-batches of `batch_size` matching elements from `y` and `tx`.
+    Data can be randomly shuffled to avoid ordering in the original data messing with the randomness of the minibatches.
+    Example of use :
+    for minibatch_y, minibatch_tx in batch_iter(y, tx, 32):
+        <DO-SOMETHING>
+    """
+    data_size = len(y)
+
+    if shuffle:
+        shuffle_indices = np.random.permutation(np.arange(data_size))
+        shuffled_y = y[shuffle_indices]
+        shuffled_tx = tx[shuffle_indices]
+    else:
+        shuffled_y = y
+        shuffled_tx = tx
+    for batch_num in range(num_batches):
+        start_index = batch_num * batch_size
+        end_index = min((batch_num + 1) * batch_size, data_size)
+        if start_index != end_index:
+            yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
+####################################LR and reg LR functions #####################################
 
 def sigmoid(z):
     """
@@ -89,6 +114,7 @@ def LR_loss_function(y, tx, w):
     return loss
 
 
+####################################reg LR functions ###########################################
 
 def reg_LR_update_weights(y, tx, w, gamma, lambda_):
     """
@@ -132,6 +158,8 @@ def reg_LR_loss_function(y, tx, w, lambda_):
 
 
 
+####################################evaluations functions ####################################
+
 
 def compute_accuracy(y_pred, y):
     """
@@ -147,23 +175,40 @@ def compute_accuracy(y_pred, y):
     acc = np.count_nonzero(arr==0) / len(y)
     return acc
 
-def build_k_indices(y, k_fold, seed):
-    """
-    build k indices for k-fold.
-    
-    :param y: labels
-    :param k_fold: number of folds
-    :param seed: seed for randomization
-    
-    :return k_indices: indices 
-    """
-    num_row = y.shape[0]
-    interval = int(num_row / k_fold)
-    np.random.seed(seed)
-    indices = np.random.permutation(num_row)
-    k_indices = [indices[k * interval: (k + 1) * interval] for k in range(k_fold)]
-    return np.array(k_indices)
 
+
+
+
+
+
+
+
+    
+def evaluate(tx,y_std, wf, degree):
+    
+    """
+    function to evaluate weights over all the train model
+    
+    :param tx: train features
+    :param wf: wights to evaluate
+    :param degree: degree of expansion
+    :return acc: accuracy of the weights over the train model
+    """
+    if degree is not None:
+        tx =build_poly(tx, degree)
+    if isinstance(wf, list):
+        wk =np.mean(wf, axis =0)
+
+    else:
+        wk = wf
+                
+    y_pred = predict_labels(wk, tx)
+    acc = compute_accuracy(y_std*2-1, y_pred)
+    return acc
+
+
+
+####################################Data processing functions ####################################
 def replace(tX, value):
     """
     Replaces invalid values with the mean of all the values in the cooresponding feature 
@@ -191,31 +236,6 @@ def build_poly(x, degree):
         poly = np.c_[poly, np.power(x, deg)]
     return poly
 
-
-
-
-    
-def evaluate(tx,y_std, wf, degree):
-    
-    """
-    function to evaluate weights over all the train model
-    
-    :param tx: train features
-    :param wf: wights to evaluate
-    :param degree: degree of expansion
-    :return acc: accuracy of the weights over the train model
-    """
-    if degree is not None:
-        tx =build_poly(tx, degree)
-    if isinstance(wf, list):
-        wk =np.mean(wf, axis =0)
-
-    else:
-        wk = wf
-                
-    y_pred = predict_labels(wk, tx)
-    acc = compute_accuracy(y_std*2-1, y_pred)
-    return acc
 def remove_outliers_IQR(tx, y_, high,low):
     """
     removes outliers using IQR
@@ -232,7 +252,6 @@ def remove_outliers_IQR(tx, y_, high,low):
     tX_no_outliers = tx[~((tx < (Q1 - 1.5 * IQR)) |(tx > (Q3 + 1.5 * IQR))).any(axis=1)]
     y_no_outliers = y_[~((tx < (Q1 - 1.5 * IQR)) |(tx > (Q3 + 1.5 * IQR))).any(axis=1)]
     return tX_no_outliers, y_no_outliers
-
 
 
 wheel = ('-', '/', '|', '\\')
@@ -308,6 +327,10 @@ def build_model_data(height, weight):
     return y, tx
     
 
+
+####################################cross validation function ####################################
+
+
 def cross_validation(y, x, k_indices,k, regression_method, **kwargs):
     """
     Computes cross validation on a given data set using a given regression method, and computes the
@@ -377,6 +400,24 @@ def cross_validation(y, x, k_indices,k, regression_method, **kwargs):
     accuracy_test = compute_accuracy(y_test_pred, y_test)
     return w, loss_train, loss_test, accuracy_train, accuracy_test
 
+def build_k_indices(y, k_fold, seed):
+    """
+    build k indices for k-fold.
+    
+    :param y: labels
+    :param k_fold: number of folds
+    :param seed: seed for randomization
+    
+    :return k_indices: indices 
+    """
+    num_row = y.shape[0]
+    interval = int(num_row / k_fold)
+    np.random.seed(seed)
+    indices = np.random.permutation(num_row)
+    k_indices = [indices[k * interval: (k + 1) * interval] for k in range(k_fold)]
+    return np.array(k_indices)
+####################################Training Function ############################################
+
 def train(model,y,tx,tX_std,y_std,seed=0, **kwargs):
     """
     regularized logistic regression function 
@@ -433,27 +474,3 @@ def train(model,y,tx,tX_std,y_std,seed=0, **kwargs):
 
     return weights, sum(accuracies_train)/len(accuracies_train),sum(accuracies_test)/len(accuracies_test)
     
-def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
-    """
-    Generate a minibatch iterator for a dataset.
-    Takes as input two iterables (here the output desired values 'y' and the input data 'tx')
-    Outputs an iterator which gives mini-batches of `batch_size` matching elements from `y` and `tx`.
-    Data can be randomly shuffled to avoid ordering in the original data messing with the randomness of the minibatches.
-    Example of use :
-    for minibatch_y, minibatch_tx in batch_iter(y, tx, 32):
-        <DO-SOMETHING>
-    """
-    data_size = len(y)
-
-    if shuffle:
-        shuffle_indices = np.random.permutation(np.arange(data_size))
-        shuffled_y = y[shuffle_indices]
-        shuffled_tx = tx[shuffle_indices]
-    else:
-        shuffled_y = y
-        shuffled_tx = tx
-    for batch_num in range(num_batches):
-        start_index = batch_num * batch_size
-        end_index = min((batch_num + 1) * batch_size, data_size)
-        if start_index != end_index:
-            yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
