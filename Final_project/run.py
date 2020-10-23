@@ -22,7 +22,7 @@ with open('parameters.json') as param:
 
 print("loading data...", end = " ")
 "load the data"
-DATA_TRAIN_PATH = '../project1/data/train.csv' 
+DATA_TRAIN_PATH = '../data/train.csv' 
 
 idx = 0
 
@@ -46,10 +46,37 @@ tX_no_outliers_std, _, _ = standardize(tX_no_outliers,tX_mean,tX_stdev)
 
 ####################################Main function ####################################################
 
-def run():
+def train():
 	print("training using: ",parameters[Method]["f_name"])
-	train(globals()[parameters[Method]["f_name"]],y_no_outliers,tX_no_outliers_std,tX_std,y_std,seed=0,**parameters[Method])
+	weights = train(globals()[parameters[Method]["f_name"]],y_no_outliers,tX_no_outliers_std,tX_std,y_std,seed=0,**parameters[Method])
+	return weights
+
+def test_w(weights):
+	"""
+	create submission by predicting the labels given on the test set by the weights
+	:param weights: weights to test.
+	"""
+	#load testing data
+	DATA_TEST_PATH = '../data/test.csv' 
+	_, tX_test, ids_test = load_csv_data(DATA_TEST_PATH)
+
+	#standardize the testing data wrt to the train mean and standard deviation
+	tX_test_std = standardize(tX_test, tX_mean, tX_stdev)
+
+	#expand the test features to the same degree as the train were expanded
+	tX_test_std =build_poly(tX_test_std, parameters[Method]["degree"])
+
+	#specify output path
+	OUTPUT_PATH = '../data/sample_submission.csv' 
+
+	#predict the label
+	y_pred = predict_labels(np.mean(wights,axis=0), tX_test_std)
+
+	#create submission
+	create_csv_submission(ids_test, y_pred, OUTPUT_PATH)
 
           
 if __name__ == '__main__':
-    run()
+    weights = train()
+    test_w(weights)
+    # load test data
