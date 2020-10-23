@@ -1,7 +1,7 @@
 {"LR":{
     "f_name": "logistic_regression",
     "gamma":0.227184057,
-    "max_iter":200,
+    "max_iter":300,
     "k_fold":5, 
     "degree":2
     },
