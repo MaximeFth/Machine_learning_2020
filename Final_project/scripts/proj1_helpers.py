@@ -209,20 +209,25 @@ def evaluate(tx,y_std, wf, degree):
 
 
 ####################################Data processing functions ####################################
-def replace(tX, value):
+def replace(tx, value):
     """
-    Replaces invalid values with the mean of all the values in the cooresponding feature 
+    Replaces invalid values with the median of all the values in the cooresponding feature,
+    if the median is -999 then replace it by 0
 
     :param tX: features
     :param value: value to replace
     :return tX: tX with replaced values
     """
-    for i in range(tX.shape[1]):
-        data = tX[:, i].copy()
-        np.delete(data, np.where(data == value))  
-        data_median = np.median(data)  
-        tX[tX[:, i] == value,i] = data_median  
-    return tX
+    for i in range(tx.shape[1]):
+        data = tx[:, i].copy()
+        np.delete(data, np.where(data == value)) 
+        if(np.median(data) == -999):
+            data_median = 0  
+        else :
+            data_median = np.median(data)
+        tx[tx[:, i] == value,i] = data_median  
+    return tx
+
 
 def build_poly(x, degree):
     """

@@ -45,7 +45,7 @@ tX_std, tX_mean, tX_stdev  = standardize(tX)
 
 
 "remove outiers"
-tX_no_outliers, y_no_outliers = remove_outliers_IQR(tX,y_std, 0.85, 0)
+tX_no_outliers, y_no_outliers = remove_outliers_IQR(tX,y_std, 0.87, 0)
 
 "standardize the features"
 tX_no_outliers_std, _, _ = standardize(tX_no_outliers,tX_mean,tX_stdev)
