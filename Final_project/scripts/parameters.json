@@ -1,6 +1,6 @@
 {"LR":{
     "f_name": "logistic_regression",
-    "gamma":0.227184057,
+    "gamma":0.5175,
     "max_iter":300,
     "k_fold":5, 
     "degree":2
@@ -37,6 +37,6 @@
     "f_name": "ridge_regression",
     "max_iter":1,
     "k_fold":5,
-    "lambda_":0.02, 
-    "degree":2} 
+    "lambda_":0, 
+    "degree":0} 
 }
