@@ -7,7 +7,6 @@ This project runs on python3 and requires as external library: numpy, matplotlib
 ```
 pip install numpy 
 pip install matplotlib
-
 ```
 
 ### Installing prerequisites
