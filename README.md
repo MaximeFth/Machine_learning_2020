@@ -15,7 +15,16 @@ pip install matplotlib
 ```
 pip install -r requirements.txt
 ```
+### Usage 
 
+```
+cd scripts
+python run.py [model]
+model by default is logistic regression
+
+see options with
+python run.py -h
+```
 ## Structure
 The project is composed of 4 main files: 
 ```
