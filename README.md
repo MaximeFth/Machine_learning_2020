@@ -1,5 +1,6 @@
 # CS-433 Machine Learning Project 1
-
+### Abstract
+In 2013, the discovery of Higgs boson is acknowledged by the Nobel prize in physics. With data provided by the ATLAS experiment at CERN, Higgs classification task became an  interesting  challenge.  For  this  purpose,  several  machine learning  models  are  tested.  Our  best  model  achieves  0.8  of accuracy.
 ### Prerequisites
 
 This project runs on python3 and requires as external library: numpy, matplotlib
