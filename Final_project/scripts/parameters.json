@@ -8,8 +8,8 @@
 "R_LR":{
     "f_name": "reg_logistic_regression",
     "lambda_":0, 
-    "gamma":0.227184057,
-    "max_iter":200,
+    "gamma":0.5175,
+    "max_iter":300,
     "k_fold":5, 
     "degree":2
     },  
