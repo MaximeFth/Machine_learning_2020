@@ -37,9 +37,9 @@ Data:
 ```
 - undefined values : undefined entries of value -999 replaced by the median
 - outliers removal : outliers removed using IQR
-- standardization : data with zero mean and unit variance.
+- standardization : classic standardization to achieve zero mean and unit variance on the data
 
-- label data : from initial labels of {-1, 1} to {0, 1} labels for logsitic regression
+- label data : from initial labels of {-1, 1} to {0, 1} labels for logistic regression
 ```
 
 ### Training
@@ -51,7 +51,7 @@ Data:
 
 ### Testing
 ```
-- pre-processing of the test data
+- Pre-processing of the test data
 - Prediction using trained model written in sample_submission.csv 
 ```
 
