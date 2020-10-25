@@ -13,7 +13,11 @@ import sys
 
 if len(sys.argv) > 1:
 	Method = str(sys.argv[1])
-	print(Method)
+	if Method == "-h":
+		print("#"*50)
+		print("LR: Logistic regression \nR_LR: Regularized logistic regression\nLS_SGD: Least square stochastic gradient descent\nLS_GD: Least square gradient descent\nRR: Ridge regression\nLS: Least square") 
+		print("#"*50)
+		Method = input("Please choose Method: ")
 else:
 	Method = "LR"
 assert Method in ['LR', 'R_LR', 'LS_SGD', 'LS_GD', 'RR', 'LS'], "method name not correct, please choose one of the following: LR, R_LR, LS_SGD, LS_GD, RR, LS"
@@ -25,7 +29,7 @@ if parameters[Method]["degree"] == 0:
 	parameters[Method]["degree"] = None
 ####################################DATA PRE PROCESSING ############################################
 
-print("loading data...", end = " ")
+print("loading data...")
 "load the data"
 DATA_TRAIN_PATH = '../data/train.csv' 
 
@@ -56,6 +60,8 @@ tX_no_outliers_std, _, _ = standardize(tX_no_outliers,tX_mean,tX_stdev)
 
 def train_w():
 	print("training using: ",parameters[Method]["f_name"])
+	print("with parameters: ",parameters[Method])
+
 	final_weights = train(globals()[parameters[Method]["f_name"]],y_no_outliers,tX_no_outliers_std,tX_std,y_std,seed=0,**parameters[Method])
 	return final_weights
 
@@ -64,9 +70,10 @@ def test_w(final_weights):
 	create submission by predicting the labels given on the test set by the weights
 	:param weights: weights to test.
 	"""
+	print("loading test data...")
+
 	weights, _, _ = final_weights
 	#load testing data
-	print("loading test data...", end = " ")
 	DATA_TEST_PATH = '../data/test.csv' 
 	_, tX_test, ids_test = load_csv_data(DATA_TEST_PATH)
 
