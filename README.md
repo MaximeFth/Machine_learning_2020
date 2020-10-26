@@ -21,17 +21,21 @@ Please put train.csv and test.csv inside a data directory at same level than the
 |-data
 |  |--train.csv
 |  |--test.csv
+|  |--sample_submission.csv
 |-scripts
 |  |--run.py
 |  |--implementations.py
 |  |--proj1_helpers.py
 |  |--parameters.json
+|-latex_report
+|-requirements.txt
+
 
 #cd scripts
 #python run.py [model]
 By not precising the model, the default and best model, logistic regression, will be picked.
 
-Submissin file will be created in data/
+Submission file will be created in data/
 
 
 see options with
