@@ -29,7 +29,7 @@ Please put train.csv and test.csv inside a data directory at same level than the
 
 #cd scripts
 #python run.py [model]
-(model by default is logistic regression)
+By not precising the model, the default and best model, logistic regression, will be picked.
 
 Submissin file will be created in data/
 
