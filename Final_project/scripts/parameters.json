@@ -1,6 +1,6 @@
 {"LR":{
     "f_name": "logistic_regression",
-    "gamma":0.5175,
+    "gamma":0.613636,
     "max_iter":300,
     "k_fold":5, 
     "degree":2
@@ -8,7 +8,7 @@
 "R_LR":{
     "f_name": "reg_logistic_regression",
     "lambda_":0, 
-    "gamma":0.5175,
+    "gamma":0.613636,
     "max_iter":300,
     "k_fold":5, 
     "degree":2
