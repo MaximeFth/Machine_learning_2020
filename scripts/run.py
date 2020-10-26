@@ -1,3 +1,12 @@
+###############################################################################################
+#   run.py contains the main run program. To launch it please enter in terminal the following:
+#	#python run.py [model]
+#   you can choose the model in ['LR', 'R_LR', 'LS_SGD', 'LS_GD', 'RR', 'LS']. By default,
+#	logistic regression (LR) is used, which gives the best accuracy. After training a submission
+# 	file will be created in the data folder named sample_submission.csv
+###############################################################################################
+
+
 from proj1_helpers import *
 from implementations import *
 import matplotlib.pyplot as plt

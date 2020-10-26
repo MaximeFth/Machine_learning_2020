@@ -1,4 +1,10 @@
-"""some helper functions for project 1."""
+###############################################################################################
+#   Proj1_helpers.py contains not only helpers function for the implementations of the methods
+#   implemented in implementations.py but also the training, evaluation and crossvalidation 
+#   functions used in the training of the models.
+#
+###############################################################################################
+
 import csv
 #from tqdm import tqdm banned :/
 import numpy as np

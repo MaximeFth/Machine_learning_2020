@@ -1,9 +1,8 @@
-####################################################################
-#   Implementations.py contains all methods implementations
-#   every method takes differents arguments but always output
-#   final weights and the last loss found.
+###############################################################################################
+#   Implementations.py contains all methods implementations every method takes differents
+#   arguments but always output final weights and the last loss found.
 #
-####################################################################
+###############################################################################################
 
 import proj1_helpers as ph
 import numpy as np
