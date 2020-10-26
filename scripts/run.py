@@ -97,7 +97,7 @@ def test_w(final_weights):
 		tX_test_std =build_poly(tX_test_std, parameters[Method]["degree"])
 
 	#specify output path
-	OUTPUT_PATH = '../data/sample_submission.csv' 
+	OUTPUT_PATH = '../data/sample-submission.csv' 
 
 	#predict the label
 	y_pred = predict_labels(np.mean(weights,axis=0), tX_test_std)
