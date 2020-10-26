@@ -17,7 +17,7 @@ pip install -r requirements.txt
 ```
 ### Usage 
 ```
-Please put train.csv and test.csv inside a data directory at same level than the script directory.
+Please put train.csv and test.csv inside a directory named data at same level than the script directory.
 |-data
 |  |--train.csv
 |  |--test.csv
