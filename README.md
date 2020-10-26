@@ -16,8 +16,17 @@ pip install matplotlib
 pip install -r requirements.txt
 ```
 ### Usage 
-
 ```
+Please put train.csv and test.csv inside a data directory at same level than the script directory.
+|-data
+|  |--train.csv
+|  |--test.csv
+|-script
+|  |--run.py
+|  |--implementations.py
+|  |--proj1_helpers.py
+|  |--parameters.json
+
 #cd scripts
 #python run.py [model]
 (model by default is logistic regression)
