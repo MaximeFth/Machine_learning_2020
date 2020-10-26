@@ -472,7 +472,7 @@ def train(model,y,tx,tX_std,y_std,seed=0, **kwargs):
         if model is imp.least_square or model is imp.ridge_regression:
             print("{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}".format(losses_train[i], losses_test[i] ,accuracies_train[i], accuracies_test[i], evaluate(tX_std,y_std, np.array(weights[i]), degree)))
         else:
-            print("{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}".format(losses_train[i][-1], losses_test[i] ,accuracies_train[i], accuracies_test[i], evaluate(tX_std,y_std, np.array(weights[i]), degree)))
+            print("{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}|{:< 15f}".format(losses_train[i], losses_test[i] ,accuracies_train[i], accuracies_test[i], evaluate(tX_std,y_std, np.array(weights[i]), degree)))
         print("{:15.1}|{:15.14}|{:15.14}|{:15.14}|{:15.14}".format("","","","",""))
     print("<-"+"-"*75+"->")
     print(f"evaluation mean w: {evaluate(tX_std,y_std, weights, degree)}")

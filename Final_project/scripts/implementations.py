@@ -1,6 +1,14 @@
+####################################################################
+#   Implementations.py contains all methods implementations
+#   every method takes differents arguments but always output
+#   final weights and the last loss found.
+#
+####################################################################
+
 import proj1_helpers as ph
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 def least_squares_GD(y, tx, initial_w, max_iter, gamma):
     """
@@ -23,8 +31,8 @@ def least_squares_GD(y, tx, initial_w, max_iter, gamma):
         w = w-gamma*gradient
         ws.append(w)
         losses.append(loss)
-        
-    return np.array(ws)[-1], np.array(losses)
+
+    return np.array(ws)[-1], np.array(losses)[-1]
 def least_squares_SGD(y, tx, initial_w, batch_size, max_iter, gamma):
     """
     Least square stochastic gradient descent
@@ -55,8 +63,7 @@ def least_squares_SGD(y, tx, initial_w, batch_size, max_iter, gamma):
         ws.append(w)
         losses.append(loss)
 
-
-    return np.array(ws)[-1], np.array(losses)
+    return np.array(ws)[-1], np.array(losses)[-1]
 
 
 
@@ -69,7 +76,7 @@ def least_square(y, tx):
     :returns w,l: weights and loss of the model
     """
     w = np.linalg.solve(tx.T@tx,tx.T@y)
-    l = ph.compute_loss(y, tx, w)
+    l = ph.compute_loss(y, tx, w) 
     return w, l
 
 def ridge_regression(y, tx, lambda_):
@@ -107,7 +114,8 @@ def logistic_regression(y,tx, initial_w,  max_iter, gamma):
         losses.append(loss)
         ws.append(w)
     ls, wes  = np.array(losses), np.array(ws)
-    return wes[-1],ls
+
+    return wes[-1],ls[-1]
 
 
 def reg_logistic_regression(y,tx, initial_w,max_iter, gamma,lambda_):
@@ -127,14 +135,15 @@ def reg_logistic_regression(y,tx, initial_w,max_iter, gamma,lambda_):
     losses = []
     ws = []
     for iter_n in range(max_iter):
-        if(iter_n > 800):
-            gamma = gamma-gamma/30
         w = ph.reg_LR_update_weights(y, tx, initial_w, gamma,lambda_)
         loss = ph.reg_LR_loss_function(y, tx, w, lambda_)
         losses.append(loss)
         ws.append(w)
     ls, wes  = np.array(losses), np.array(ws)
-    return wes[-1],ls
+    print(wes[-1]) 
+    print("#"*33)
+    print(ls) 
+    return wes[-1],ls[-1]
 
 
 
