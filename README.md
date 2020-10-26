@@ -18,9 +18,12 @@ pip install -r requirements.txt
 ### Usage 
 
 ```
-cd scripts
-python run.py [model]
-model by default is logistic regression
+#cd scripts
+#python run.py [model]
+(model by default is logistic regression)
+
+Submissin file will be created in data/
+
 
 see options with
 python run.py -h
