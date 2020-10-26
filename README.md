@@ -21,7 +21,7 @@ Please put train.csv and test.csv inside a data directory at same level than the
 |-data
 |  |--train.csv
 |  |--test.csv
-|-script
+|-scripts
 |  |--run.py
 |  |--implementations.py
 |  |--proj1_helpers.py
