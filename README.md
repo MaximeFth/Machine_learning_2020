@@ -26,7 +26,7 @@ Submissin file will be created in data/
 
 
 see options with
-python run.py -h
+#python run.py -h
 ```
 ## Structure
 The project is composed of 4 main files: 
